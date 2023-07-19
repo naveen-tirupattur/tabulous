@@ -16,14 +16,23 @@
       </li>
     </template>
 
-<!--    <h1></h1>-->
-<!--    <button>Group Tabs</button>-->
-
-    <h1>Select Tab Grouping Option:</h1>
-    <button id="groupActive">Active Window</button>
-    <button id="groupAll">All Windows</button>
-    <button id="ungroup">Ungroup Active Window</button>
-    <button id="ungroupAll">Ungroup All Windows</button>
+    <h1>Select Tab Action:</h1>
+    <form id="tabActionsForm">
+      <input type="radio" name="tabAction" id="groupActive" value="groupActive">
+      <label for="groupActive">Group Tabs (Active Window)</label>
+      <br>
+      <input type="radio" name="tabAction" id="groupAll" value="groupAll">
+      <label for="groupAll">Group Tabs (All Windows)</label>
+      <br>
+      <input type="radio" name="tabAction" id="ungroupActive" value="ungroupActive">
+      <label for="ungroupActive">Ungroup Tabs (Active Window)</label>
+      <br>
+      <input type="radio" name="tabAction" id="ungroupAll" value="ungroupAll">
+      <label for="ungroupAll">Ungroup Tabs (All Windows)</label>
+      <br>
+      <br>
+      <button type="submit">Submit</button>
+    </form>
     <ul></ul>
 
     <script src="./popup.js" type="module"></script>

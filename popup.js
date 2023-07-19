@@ -1,23 +1,13 @@
 // popup.js
 
 // Function to send a message to background.js
-function sendMessageToBackground(action, tabGroupingOption) {
-  chrome.runtime.sendMessage({ action, tabGroupingOption });
+function sendMessageToBackground(action) {
+  chrome.runtime.sendMessage({ action });
 }
 
-// Attach click event listeners to the buttons
-document.getElementById('groupActive').addEventListener('click', () => {
-  sendMessageToBackground('groupTabs', 'active');
-});
-
-document.getElementById('groupAll').addEventListener('click', () => {
-  sendMessageToBackground('groupTabs', 'all');
-});
-
-document.getElementById('ungroup').addEventListener('click', () => {
-  sendMessageToBackground('ungroup', 'active');
-});
-
-document.getElementById('ungroupAll').addEventListener('click', () => {
-  sendMessageToBackground('ungroup', 'allß');
+// Handle form submission
+document.getElementById('tabActionsForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const selectedAction = document.querySelector('input[name="tabAction"]:checked').value;
+  sendMessageToBackground(selectedAction);
 });

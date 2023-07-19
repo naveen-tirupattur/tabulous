@@ -26,7 +26,7 @@ async function groupTabsToWindow(tabIds, windowId, domain) {
 
 // Function to handle grouping tabs
 function groupTabsHandler(tabGroupingOption) {
-  const windowId = tabGroupingOption === 'active' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
+  const windowId = tabGroupingOption === 'groupActive' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
   chrome.tabs.query({windowId:windowId}, (tabs) => {
     const tabGroups = groupTabsByDomain(tabs);
     // var sortedMap = [tabGroups.entries()].sort((a, b) => a[1] > b[1]);
@@ -42,7 +42,8 @@ function groupTabsHandler(tabGroupingOption) {
 
 // Function to handle ungrouping of tabs in active window
 function ungroupTabsHandler(tabGroupingOption) {
-  const windowId = tabGroupingOption === 'active' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
+  console.log(tabGroupingOption);
+  const windowId = tabGroupingOption === 'ungroupActive' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
   chrome.tabs.query({windowId:windowId}, (tabs) => {
     tabs.forEach((tab) => {
       chrome.tabs.ungroup(tab.id);
@@ -52,12 +53,10 @@ function ungroupTabsHandler(tabGroupingOption) {
 
 // Listen for messages from the popup window
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'groupTabs') {
-    groupTabsHandler(request.tabGroupingOption);
-  } else if (request.action === 'ungroup') {
-    ungroupTabsHandler(request.tabGroupingOption);
+  console.log(request);
+  if (request.action === 'groupActive' || request.action === 'groupAll') {
+    groupTabsHandler(request.action);
+  } else if (request.action === 'ungroupActive' || request.action === 'ungroupAll') {
+    ungroupTabsHandler(request.action);
   }
 });
-
-
-
