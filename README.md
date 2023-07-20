@@ -1,4 +1,4 @@
-# Tab Tamer Chrome Extension
+# TabZen Chrome Extension
 
 This is a Chrome extension that allows you to group tabs by domain name. 
 It provides the option to group/ungroup tabs either in the active window or across all windows.
@@ -27,7 +27,6 @@ To install the extension, follow these steps:
    - **Group Tabs (All Windows):** Group tabs across all open windows by domain name.
    - **Ungroup Tabs (Active Window):** Ungroup tabs within the active window.
    - **Ungroup Tabs (All Windows):** Ungroup tabs across all open windows.
-4. Click the "Submit" button to initiate the selected action.
 
 ## Folder Structure
 
