@@ -1,4 +1,4 @@
-# Tab Grouping Chrome Extension
+# Tab Tamer Chrome Extension
 
 This is a Chrome extension that allows you to group tabs by domain name. 
 It provides the option to group/ungroup tabs either in the active window or across all windows.

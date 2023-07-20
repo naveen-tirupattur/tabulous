@@ -52,11 +52,11 @@ function ungroupTabsHandler(tabGroupingOption) {
 }
 
 // Listen for messages from the popup window
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender,  sendResponse) => {
   console.log(request);
-  if (request.action === 'groupActive' || request.action === 'groupAll') {
-    groupTabsHandler(request.action);
-  } else if (request.action === 'ungroupActive' || request.action === 'ungroupAll') {
-    ungroupTabsHandler(request.action);
+  if (request.optionValue === 'groupActive' || request.optionValue === 'groupAll') {
+    groupTabsHandler(request.optionValue);
+  } else if (request.optionValue === 'ungroupActive' || request.optionValue === 'ungroupAll') {
+    ungroupTabsHandler(request.optionValue);
   }
 });
