@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-
-    <!--      <input type="radio" name="tabAction" id="groupActive" value="groupActive">-->
-    <!--      <label for="groupActive">Group Tabs (Active Window)</label>-->
-    <!--      <br>-->
-    <!--      <input type="radio" name="tabAction" id="groupAll" value="groupAll">-->
-    <!--      <label for="groupAll">Group Tabs (All Windows)</label>-->
-    <!--      <br>-->
-    <!--      <input type="radio" name="tabAction" id="ungroupActive" value="ungroupActive">-->
-    <!--      <label for="ungroupActive">Ungroup Tabs (Active Window)</label>-->
-    <!--      <br>-->
-    <!--      <input type="radio" name="tabAction" id="ungroupAll" value="ungroupAll">-->
-    <!--      <label for="ungroupAll">Ungroup Tabs (All Windows)</label>-->
-    <!--      <br>-->
-
-    <!--    <ul></ul>-->
-    <div class="container">
-        <h1 class="header">Tab Tamer Help Me</h1>
-        <div class="action-container">
-            <label class="switch">
-                <input type="radio" name="tabAction" value="groupActive">
-                <span class="slider"></span>
-                Group Tabs (Active Window)
-            </label>
-            <label class="switch">
-                <input type="radio" name="tabAction" value="groupAll">
-                <span class="slider"></span>
-                Group Tabs (All Windows)
-            </label>
-            <label class="switch">
-                <input type="radio" name="tabAction" value="ungroupActive">
-                <span class="slider"></span>
-                Ungroup Tabs (Active Window)
-            </label>
-            <label class="switch">
-                <input type="radio" name="tabAction" value="ungroupAll">
-                <span class="slider"></span>
-                Ungroup Tabs (All Windows)
-            </label>
-        </div>
+<div class="container">
+    <div class="header">
+        <h1 class="header">TabZen Help Me</h1>
     </div>
-    <script src="./popup.js" type="module"></script>
+    <div class="action-container">
+        <label class="switch">
+            <input type="radio" name="tabAction" value="groupActive">
+            <span class="slider"></span>
+            Group Tabs (Active Window)
+        </label>
+        <label class="switch">
+            <input type="radio" name="tabAction" value="groupAll">
+            <span class="slider"></span>
+            Group Tabs (All Windows)
+        </label>
+        <label class="switch">
+            <input type="radio" name="tabAction" value="ungroupActive">
+            <span class="slider"></span>
+            Ungroup Tabs (Active Window)
+        </label>
+        <label class="switch">
+            <input type="radio" name="tabAction" value="ungroupAll">
+            <span class="slider"></span>
+            Ungroup Tabs (All Windows)
+        </label>
+        <label class="switch">
+            <input type="radio" name="tabAction" value="detectActive">
+            <span class="slider"></span>
+            Detect Duplicate Tabs (Active Window)
+        </label>
+        <label class="switch">
+            <input type="radio" name="tabAction" value="detectAll">
+            <span class="slider"></span>
+            Detect Duplicate Tabs (All Windows)
+        </label>
+    </div>
+</div>
+
+<script src="popup.js"></script>
 </body>
 </html>
+
