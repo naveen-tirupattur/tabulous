@@ -8,45 +8,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1 class="header">TabZen Help Me</h1>
+        <h1 class="header">TabZen!</h1>
     </div>
     <div class="action-container">
         <label class="switch">
-            <input type="radio" name="tabAction" value="groupActive">
+            <input type="checkbox" name="tabAction", value="groupActive">
             <span class="slider"></span>
-            Group Tabs (Active Window)
+            Group/Ungroup Tabs (Active Window)
         </label>
         <label class="switch">
-            <input type="radio" name="tabAction" value="groupAll">
+            <input type="checkbox" name="tabAction", value="detectAll">
             <span class="slider"></span>
-            Group Tabs (All Windows)
-        </label>
-        <label class="switch">
-            <input type="radio" name="tabAction" value="ungroupActive">
-            <span class="slider"></span>
-            Ungroup Tabs (Active Window)
-        </label>
-        <label class="switch">
-            <input type="radio" name="tabAction" value="ungroupAll">
-            <span class="slider"></span>
-            Ungroup Tabs (All Windows)
-        </label>
-        <label class="switch">
-            <input type="radio" name="tabAction" value="detectActive">
-            <span class="slider"></span>
-            Detect Duplicate Tabs (Active Window)
-        </label>
-        <label class="switch">
-            <input type="radio" name="tabAction" value="detectAll">
-            <span class="slider"></span>
-            Detect Duplicate Tabs (All Windows)
+            Show Duplicate Tabs (All Windows)
         </label>
     </div>
+    <div>
+        <button class="btn" id="groupAll">
+            <i class="fas fa-home"></i>
+            Group tabs in all windows
+        </button>
+    </div>
+    <ul id="duplicateTabsList" class="duplicate-tabs-list"></ul>
 </div>
 
 <script src="popup.js"></script>

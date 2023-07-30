@@ -9,9 +9,10 @@
     "128": "images/icon-128.png"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "images/icon-128.png"
   },
-  "permissions": ["tabs","tabGroups","scripting","activeTab"],
+  "permissions": ["tabs","tabGroups","scripting","activeTab", "storage", "notifications"],
   "background": {"service_worker": "background.js"},
   "host_permissions": ["<all_urls>"]
 }
