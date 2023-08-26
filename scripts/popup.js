@@ -10,9 +10,9 @@ function handleToggleSwitches(selectedElement, selectedAction) {
   // const selectedAction = document.querySelector('input[name="tabAction"]:checked').value;
   if (selectedElement === 'groupActive' || selectedElement === 'groupAll') {
     sendMessageToBackground('groupTabs', selectedElement, selectedAction);
-  } else if (selectedElement === 'detectAll') {
-    sendMessageToBackground('detectDuplicates', selectedElement, selectedAction);
-  }
+  } else
+    sendMessageToBackground(selectedElement, selectedElement, selectedAction);
+
   // Save the value to sync storage
   chrome.storage.sync.set({[selectedElement]: selectedAction}, function() {
     console.log('Saved', selectedElement, selectedAction);
@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.storage.sync.get(selectedElement, function(result) {
       console.log(selectedElement, result[selectedElement])
       switchElement.checked = result[selectedElement];
-      if(selectedElement === 'groupActive' || selectedElement === 'detectAll')
+      if(selectedElement === 'groupActive'
+          || selectedElement === 'detectDuplicates'
+          || selectedElement === 'summarize')
         handleToggleSwitches(selectedElement, result[selectedElement]);
     });
 
@@ -43,6 +45,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
   groupAllButton.addEventListener('click', function () {
     handleToggleSwitches('groupAll', true);
+  });
+
+  // Saves the API key to chrome.storage
+  const saveButton = document.getElementById('saveButton');
+
+  saveButton.addEventListener('click', function () {
+    const apiKey = document.querySelector('#apiKey').value;
+    chrome.storage.sync.set({
+      "apiKey": apiKey
+    }, () => {
+      // Update status to let user know options were saved.
+      const status = document.getElementById('status');
+      status.textContent = 'Options saved.';
+      setTimeout(() => {
+        status.textContent = '';
+      }, 750);
+    });
   });
 
   // Function to update the popup content with the list of duplicate tabs

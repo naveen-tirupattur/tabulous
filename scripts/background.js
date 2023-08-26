@@ -56,22 +56,22 @@ function ungroupTabs(tabGroupingOption) {
   });
 }
 
+
+// Function to summarize the active tab
+function summarizeTabHandler(selectedElement, selectedAction) {
+  if(selectedAction) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      const activeTab = tabs[0];
+      console.log(activeTab)
+      chrome.tabs.sendMessage(tabs[0].id, {action: "summarize"}, function(response) {
+        console.log(response)
+      });
+    });
+  }
+}
+
 const tabUrls = new Set();
 const duplicateTabs = new Set();
-// chrome.tabs.onRemoved.addListener((tabId) => {
-//   tabIds.delete(tabId);
-// });
-
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   if (changeInfo.status === 'complete') {
-//     const duplicateTab = findDuplicateTab(tab);
-//     if (duplicateTab) {
-//       notifyDuplicateTab(duplicateTab);
-//     } else {
-//       tabIds.add(tabId);
-//     }
-//   }
-// });
 
 // Function to detect duplicate tabs in either active window or all windows
 function duplicateTabsHandler(selectedElement, selectedAction) {
@@ -81,16 +81,18 @@ function duplicateTabsHandler(selectedElement, selectedAction) {
         if (tabUrls.has(tab.url)) {
           // Handle duplicate tab here, for example, group them or provide visual feedback
           // For simplicity, we'll just display an alert message
-          // console.log('Found duplicate tab', tab.url)
+          console.log('Found duplicate tab', tab.url)
           duplicateTabs.add(tab);
         } else {
           tabUrls.add(tab.url);
         }
       });
     });
-    // groupAllDuplicateTabs();
+    groupAllDuplicateTabs();
+    tabUrls.clear();
   }
 }
+
 function groupAllDuplicateTabs() {
   const groups = new Map();
   duplicateTabs.forEach((tab) => {
@@ -104,11 +106,11 @@ function groupAllDuplicateTabs() {
 
   const groupedTabs = [];
   groups.forEach((group) => {
-    if (group.length > 1) {
+    if (group.length >= 1) {
       groupedTabs.push(group);
     }
   });
-
+  duplicateTabs.clear();
   sendGroupedTabsToPopup(groupedTabs);
 }
 
@@ -122,5 +124,7 @@ chrome.runtime.onMessage.addListener((request, sender,  sendResponse) => {
     groupTabsHandler(request.selectedElement, request.selectedAction);
   } else if (request.handler === 'detectDuplicates') {
     duplicateTabsHandler(request.selectedElement, request.selectedAction);
+  } else if (request.handler === 'summarize') {
+    summarizeTabHandler(request.selectedElement, request.selectedAction);
   }
 });

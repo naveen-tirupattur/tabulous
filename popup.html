@@ -23,21 +23,29 @@
             Group/Ungroup Tabs (Active Window)
         </label>
         <label class="switch">
-            <input type="checkbox" name="tabAction", value="detectAll">
+            <input type="checkbox" name="tabAction", value="detectDuplicates">
             <span class="slider"></span>
             Show Duplicate Tabs (All Windows)
         </label>
-    </div>
-    <div>
+        <label class="switch">
+            <input type="checkbox" name="tabAction", value="summarize">
+            <span class="slider"></span>
+            Summarize this tab
+        </label>
         <button class="btn" id="groupAll">
             <i class="fas fa-home"></i>
-            Group tabs in all windows
+            Group tabs from all windows
         </button>
+        <h2>API Key Settings</h2>
+        <input type="text" id="apiKey" placeholder="Enter your API key">
+        <button id="saveButton">Save</button>
     </div>
+    <br>
+    <div id="status"></div>
     <ul id="duplicateTabsList" class="duplicate-tabs-list"></ul>
 </div>
 
-<script src="popup.js"></script>
+<script src="scripts/popup.js"></script>
 </body>
 </html>
 
