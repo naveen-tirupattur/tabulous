@@ -16,13 +16,13 @@ Tired of too many tabs? Try this tabulous Chrome extension! Fully open source an
 
 To install the extension, follow these steps:
 
-1. **Clone the repository:**
+1. ** Clone the repository:**
    ```
    git clone https://github.com/naveen-tirupattur/tabulous.git
    cd tabulous
    ```
 
-2. **Create a virtual environment:**
+2. ** Create a virtual environment:**
 
     ```
     # Using venv (Python 3.x)
@@ -35,27 +35,27 @@ To install the extension, follow these steps:
     venv\Scripts\activate
     ```
 
-3. **Install dependencies:**
+3. ** Install dependencies:**
 
     ```
     pip install -r requirements.txt
     ```
 
-4. **Configuration:**
+4. ** Configuration:**
 
    - Download the appropriate llama2 cpp model from HuggingFace (courtesy of TheBloke) 
      - https://huggingface.co/TheBloke
    - Update .env file the location of model on your local machine
 
-5. **Run the application:**
+5. ** Run the application:**
 
-    ```bash
+    ```
     make start
     ```
    
-6. **Open Google Chrome and go to `chrome://extensions`**
-7. **Enable Developer mode by toggling the switch in the top right corner.**
-8. **Click on "Load unpacked" and select the directory where you saved the source code.**
+6. ** Open Google Chrome and go to `chrome://extensions`**
+7. ** Enable Developer mode by toggling the switch in the top right corner.**
+8. ** Click on "Load unpacked" and select the directory where you saved the source code.**
 
 ## Usage
 
