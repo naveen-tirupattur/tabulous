@@ -6,7 +6,7 @@ Tired of too many tabs? Try this tabulous Chrome extension! Fully open source an
 
 - Summarize the content of a tab
 - Group tabs by domain name
-- Show duplicate tabs (everybody has them ;))
+- Show duplicate tabs
 
 ## Installation
 
