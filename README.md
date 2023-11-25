@@ -49,7 +49,7 @@ To install the extension, follow these steps:
 
 5. **Run the application:**
 
-    ```
+    ```bash
     make start
     ```
    
