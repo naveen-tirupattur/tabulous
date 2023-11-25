@@ -4,7 +4,7 @@ Tired of too many tabs? Try this tabulous Chrome extension! Fully open source an
 
 ## Features
 
-- Summarize content of a tab
+- Summarize the content of a tab
 - Group tabs by domain name
 - Show duplicate tabs (everybody has them ;))
 
@@ -16,13 +16,13 @@ Tired of too many tabs? Try this tabulous Chrome extension! Fully open source an
 
 To install the extension, follow these steps:
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
    ```
    git clone https://github.com/naveen-tirupattur/tabulous.git
    cd tabulous
    ```
 
-2.  **Create a virtual environment:**
+2. **Create a virtual environment:**
 
     ```
     # Using venv (Python 3.x)
@@ -35,27 +35,27 @@ To install the extension, follow these steps:
     venv\Scripts\activate
     ```
 
-3.  **Install dependencies:**
+3. **Install dependencies:**
 
     ```
     pip install -r requirements.txt
     ```
 
-4.  **Configuration:**
+4. **Configuration:**
 
    - Download the appropriate llama2 cpp model from HuggingFace (courtesy of TheBloke) 
      - https://huggingface.co/TheBloke
-   - Update .env file the location of model on your local machine
+   - Update .env file with the location of model on your local machine
 
-5.  **Run the application:**
+5. **Run the application:**
 
     ```
     make start
     ```
    
-6.  **Open Google Chrome and go to `chrome://extensions`**
-7.  **Enable Developer mode by toggling the switch in the top right corner.**
-8.  **Click on "Load unpacked" and select the directory where you saved the source code.**
+6. **Open Google Chrome and go to `chrome://extensions`**
+7. **Enable Developer mode by toggling the switch in the top right corner.**
+8. **Click on "Load unpacked" and select the directory where you saved the source code.**
 
 ## Usage
 
@@ -63,21 +63,36 @@ To install the extension, follow these steps:
 2. A popup window will appear with options
 3. Select the desired action:
    - **Group/Ungroup Tabs (Active Window):** Group tabs within the active window by domain name.
-   - **Show
+   - **Show Duplicates:** Show duplicate tabs across all windows.
+   - **Summarize:** Summarize the content of this tab.
 
 ## Code Structure
+    - src/main/python
+        - main.py: Defines FASTAPI endpoints
+        - LLM/generate_summary.py: Uses MapReduce chain from langchain to summarize text
 
-- `background.js`: Brains of the extension, handles various operations 
-- `popup.html`: Represents the HTML content for the popup window that appears when the extension button is clicked.
-- `popup.js`: Provides the JavaScript functionality for the popup window.
-- `manifest.json`: Defines the metadata and configuration for the Chrome extension.
-- `LICENSE`: The license file specifying the GNU General Public License (GPL) terms.
+    - src/main/js
+        - `background.js`: Brains of the extension, handles various operations
+        - `popup.js`: Provides the JavaScript functionality for the popup window.
+        - `content.js`: Content script that runs in the context of the web page being viewed or accessed.
+                        It allows the extension to interact with the DOM (Document Object Model) of the webpage.
+        - `readbility.js`: JavaScript library or script designed to extract and parse content from web pages
+
+    - src/main/ui
+        - `popup.html`: Represents the HTML content for the popup window that appears when the extension button is clicked.
+
+    - `manifest.json`: Defines the metadata and configuration for the Chrome extension.
+    - `LICENSE`: The license file specifying the GNU General Public License (GPL) terms.
+
+
+## Coming Soon
+
 
 ## Customization
 
-This extension provides a basic implementation for tab grouping by domain name. You can customize and enhance the code to suit your specific needs. Some possible enhancements include:
+You can customize and enhance this code to suit your specific needs. Some possible enhancements include:
 
-- Adding additional grouping or ungrouping options.
+- Adding additional grouping options.
 - Implementing advanced tab management features.
 - Customizing the extension's appearance and behavior.
 
