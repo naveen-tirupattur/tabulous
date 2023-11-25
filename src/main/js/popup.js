@@ -75,7 +75,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const summarizeButton = document.getElementById('summarizeBtn');
 
   summarizeButton.addEventListener('click', function () {
+    // Show loading message while waiting for API response
+    showLoadingMessage();
     handleEvent('summarize', true);
+    // Hide loading message once text is generated and displayed
+    hideLoadingMessage();
+
+    // Function to show loading message
+    function showLoadingMessage() {
+      loadingMessage.style.display = 'block';
+    }
+
+    // Function to hide loading message
+    function hideLoadingMessage() {
+      loadingMessage.style.display = 'none';
+    }
   });
 
   // Function to update the popup content with the list of duplicate tabs
@@ -99,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to update the popup with summary
   function showSummary(summary) {
     const summaryText = document.getElementById('summaryText');
+
     if (summary.length === 0) {
       summaryText.textContent = 'Could not summarize the document';
     } else {

@@ -1,33 +1,71 @@
 # Tabulous!
 
-Tired of too many tabs? Try this tabulous Chrome extension!
+Tired of too many tabs? Try this tabulous Chrome extension! Fully open source and fully local. 
 
 ## Features
 
 - Summarize content of a tab
-- Group tabs by domain name.
-- Show duplicate tabs
-
+- Group tabs by domain name
+- Show duplicate tabs (everybody has them ;))
 
 ## Installation
 
+### Prerequisites
+
+- Python (version 3.11.6)
+
 To install the extension, follow these steps:
 
-1. Clone or download this repository to your local machine.
-2. Open Google Chrome and go to `chrome://extensions`.
-3. Enable Developer mode by toggling the switch in the top right corner.
-4. Click on "Load unpacked" and select the directory where you saved the extension files.
-5. The extension should now be loaded and ready to use.
+1. **Clone the repository:**
+   ```
+   git clone https://github.com/naveen-tirupattur/tabulous.git
+   cd tabulous
+   ```
+
+2. **Create a virtual environment:**
+
+    ```
+    # Using venv (Python 3.x)
+    python3 -m venv venv
+
+    # Activate the virtual environment (Linux or macOS)
+    source venv/bin/activate
+
+    # Activate the virtual environment (Windows)
+    venv\Scripts\activate
+    ```
+
+3. **Install dependencies:**
+
+    ```
+    pip install -r requirements.txt
+    ```
+
+4. **Configuration:**
+
+   - Download the appropriate llama2 cpp model from HuggingFace (courtesy of TheBloke) 
+     - https://huggingface.co/TheBloke
+   - Update .env file the location of model on your local machine
+
+5. **Run the application:**
+
+    ```
+    make start
+    ```
+   
+6. **Open Google Chrome and go to `chrome://extensions`**
+7. **Enable Developer mode by toggling the switch in the top right corner.**
+8. **Click on "Load unpacked" and select the directory where you saved the source code.**
 
 ## Usage
 
 1. Click on the extension button in the Chrome toolbar.
-2. A popup window will appear with options to group and ungroup tabs.
+2. A popup window will appear with options
 3. Select the desired action:
    - **Group/Ungroup Tabs (Active Window):** Group tabs within the active window by domain name.
    - **Show
 
-## Folder Structure
+## Code Structure
 
 - `background.js`: Brains of the extension, handles various operations 
 - `popup.html`: Represents the HTML content for the popup window that appears when the extension button is clicked.
@@ -59,7 +97,7 @@ Contributions are welcome! If you have any ideas, improvements, or bug fixes, pl
 
 ## Credits
 
-This extension was developed by Naveen Tirupattur
+This extension was developed by Naveen Tirupattur.
 
 ## Contact
 
