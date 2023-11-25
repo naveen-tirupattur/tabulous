@@ -1,0 +1,16 @@
+openai
+fastapi
+black
+isort
+websockets
+pydantic
+langchain
+uvicorn
+jinja2
+faiss-cpu
+bs4
+unstructured
+libmagic
+tiktoken
+llama-cpp-python
+python-dotenv

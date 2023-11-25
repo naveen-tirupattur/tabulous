@@ -56,25 +56,76 @@ function ungroupTabs(tabGroupingOption) {
   });
 }
 
+// Attempt to summarize the page
+async function summarize(url, truncatedVisibleText) {
+  // // Use the user's stored API key
+  // const apiKey = chrome.storage.sync.get('apiKey', function (obj){
+  //   return obj.apiKey;
+  // })
+
+  // Define the URL of your FastAPI endpoint
+  const apiUrl = 'http://localhost:9000/summarizeText';
+
+  // Create a JSON object to send as the request body (if needed)
+  const requestBody = {
+    "url": url,
+    "text": truncatedVisibleText,
+  };
+
+  // Define the headers for the request (if needed)
+  const headers = {
+    'Content-Type': 'application/json', // Adjust as needed
+    // Add any other headers you need here
+  };
+
+  // Define the fetch options
+  const fetchOptions = {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(requestBody),
+  };
+
+  console.log(fetchOptions)
+
+  // Use the fetch API to make the POST request
+  const response = await fetch(apiUrl, fetchOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then((data) => {
+        // Handle the response data here
+        console.log('Response from FastAPI:', data);
+        return data;
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during the fetch here
+        console.error('Fetch error:', error);
+      });
+  return response;
+}
 
 // Function to summarize the active tab
-function summarizeTabHandler(selectedElement, selectedAction) {
-  if(selectedAction) {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const activeTab = tabs[0];
-      console.log(activeTab)
-      chrome.tabs.sendMessage(tabs[0].id, {action: "summarize"}, function(response) {
-        console.log(response)
-      });
+function summarizeTabHandler() {
+  (async () => {
+    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+    const visibleText = await chrome.tabs.sendMessage(tab.id, {action: "getVisibleText"});
+
+    // do something with response here, not outside the function
+    const summary = summarize(tab.url, visibleText)
+    summary.then((summaryText)=> {
+      chrome.runtime.sendMessage({ action: 'summary', summaryText: summaryText });
     });
-  }
+  })();
 }
 
 const tabUrls = new Set();
 const duplicateTabs = new Set();
 
 // Function to detect duplicate tabs in either active window or all windows
-function duplicateTabsHandler(selectedElement, selectedAction) {
+function duplicateTabsHandler(selectedAction) {
   if (selectedAction) {
     chrome.tabs.query({}, (tabs) => {
       tabs.forEach((tab) => {
@@ -123,8 +174,8 @@ chrome.runtime.onMessage.addListener((request, sender,  sendResponse) => {
   if (request.handler === 'groupTabs') {
     groupTabsHandler(request.selectedElement, request.selectedAction);
   } else if (request.handler === 'detectDuplicates') {
-    duplicateTabsHandler(request.selectedElement, request.selectedAction);
+    duplicateTabsHandler(request.selectedAction);
   } else if (request.handler === 'summarize') {
-    summarizeTabHandler(request.selectedElement, request.selectedAction);
+    summarizeTabHandler();
   }
 });

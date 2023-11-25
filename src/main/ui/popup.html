@@ -14,7 +14,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 class="header">TabZen!</h1>
+        <h1 class="header">Tabuluos!</h1>
     </div>
     <div class="action-container">
         <label class="switch">
@@ -27,25 +27,17 @@
             <span class="slider"></span>
             Show Duplicate Tabs (All Windows)
         </label>
-        <label class="switch">
-            <input type="checkbox" name="tabAction", value="summarize">
-            <span class="slider"></span>
+        <button class="btn" id="summarizeBtn">
             Summarize this tab
-        </label>
-        <button class="btn" id="groupAll">
-            <i class="fas fa-home"></i>
-            Group tabs from all windows
         </button>
-        <h2>API Key Settings</h2>
-        <input type="text" id="apiKey" placeholder="Enter your API key">
-        <button id="saveButton">Save</button>
     </div>
     <br>
     <div id="status"></div>
     <ul id="duplicateTabsList" class="duplicate-tabs-list"></ul>
+    <div id="summaryText"></div>
 </div>
 
-<script src="scripts/popup.js"></script>
+<script src="../js/popup.js"></script>
 </body>
 </html>
 

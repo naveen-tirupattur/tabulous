@@ -1,12 +1,13 @@
-# TabZen Chrome Extension
+# Tabulous!
 
-This is a Chrome extension that allows you to group tabs by domain name. 
-It provides the option to group/ungroup tabs either in the active window or across all windows.
+Tired of too many tabs? Try this tabulous Chrome extension!
 
 ## Features
 
+- Summarize content of a tab
 - Group tabs by domain name.
-- Select between grouping/ungrouping tabs in the active window or across all windows.
+- Show duplicate tabs
+
 
 ## Installation
 
@@ -23,14 +24,12 @@ To install the extension, follow these steps:
 1. Click on the extension button in the Chrome toolbar.
 2. A popup window will appear with options to group and ungroup tabs.
 3. Select the desired action:
-   - **Group Tabs (Active Window):** Group tabs within the active window by domain name.
-   - **Group Tabs (All Windows):** Group tabs across all open windows by domain name.
-   - **Ungroup Tabs (Active Window):** Ungroup tabs within the active window.
-   - **Ungroup Tabs (All Windows):** Ungroup tabs across all open windows.
+   - **Group/Ungroup Tabs (Active Window):** Group tabs within the active window by domain name.
+   - **Show
 
 ## Folder Structure
 
-- `background.js`: Contains the background script that handles tab grouping and ungrouping.
+- `background.js`: Brains of the extension, handles various operations 
 - `popup.html`: Represents the HTML content for the popup window that appears when the extension button is clicked.
 - `popup.js`: Provides the JavaScript functionality for the popup window.
 - `manifest.json`: Defines the metadata and configuration for the Chrome extension.

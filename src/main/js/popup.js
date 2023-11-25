@@ -6,7 +6,7 @@ function sendMessageToBackground(handler, selectedElement, selectedAction) {
 }
 
 // Function to handle changes in the toggle switches
-function handleToggleSwitches(selectedElement, selectedAction) {
+function handleEvent(selectedElement, selectedAction) {
   // const selectedAction = document.querySelector('input[name="tabAction"]:checked').value;
   if (selectedElement === 'groupActive' || selectedElement === 'groupAll') {
     sendMessageToBackground('groupTabs', selectedElement, selectedAction);
@@ -29,39 +29,53 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log(selectedElement, result[selectedElement])
       switchElement.checked = result[selectedElement];
       if(selectedElement === 'groupActive'
-          || selectedElement === 'detectDuplicates'
-          || selectedElement === 'summarize')
-        handleToggleSwitches(selectedElement, result[selectedElement]);
+          || selectedElement === 'detectDuplicates')
+        handleEvent(selectedElement, result[selectedElement]);
     });
 
     // Listen to switch value changes
     switchElement.addEventListener('change', function (){
       const selectedAction = switchElement.checked;
-      handleToggleSwitches(selectedElement, selectedAction);
+      handleEvent(selectedElement, selectedAction);
     });
   });
 
-  const groupAllButton = document.getElementById('groupAll');
+  //  TODO - Enable this functionality in the future
+  // const groupAllButton = document.getElementById('groupAll');
+  //
+  // groupAllButton.addEventListener('click', function () {
+  //   handleEvent('groupAll', true);
+  // });
+  //
 
-  groupAllButton.addEventListener('click', function () {
-    handleToggleSwitches('groupAll', true);
-  });
+  // TODO - Add functionality to save API keys
+  // // Saves the API key to chrome.storage
+  // const saveButton = document.getElementById('saveButton');
+  //
+  // saveButton.addEventListener('click', function () {
+  //   const apiKey = document.querySelector('#apiKey').value;
+  //   chrome.storage.sync.set({
+  //     "apiKey": apiKey
+  //   }, () => {
+  //     // Update status to let user know options were saved.
+  //     const status = document.getElementById('status');
+  //     status.textContent = 'API Key Saved.';
+  //     setTimeout(() => {
+  //       status.textContent = '';
+  //     }, 750);
+  //   });
+  // });
 
-  // Saves the API key to chrome.storage
-  const saveButton = document.getElementById('saveButton');
+  // const apiKeyText = document.getElementById('apiKey');
+  // chrome.storage.sync.get('apiKey', key => {
+  //   if(key.apiKey != undefined)
+  //   apiKeyText.placeholder = key.apiKey;
+  // });
 
-  saveButton.addEventListener('click', function () {
-    const apiKey = document.querySelector('#apiKey').value;
-    chrome.storage.sync.set({
-      "apiKey": apiKey
-    }, () => {
-      // Update status to let user know options were saved.
-      const status = document.getElementById('status');
-      status.textContent = 'Options saved.';
-      setTimeout(() => {
-        status.textContent = '';
-      }, 750);
-    });
+  const summarizeButton = document.getElementById('summarizeBtn');
+
+  summarizeButton.addEventListener('click', function () {
+    handleEvent('summarize', true);
   });
 
   // Function to update the popup content with the list of duplicate tabs
@@ -82,10 +96,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Function to update the popup with summary
+  function showSummary(summary) {
+    const summaryText = document.getElementById('summaryText');
+    if (summary.length === 0) {
+      summaryText.textContent = 'Could not summarize the document';
+    } else {
+      summaryText.textContent = summary;
+    }
+  }
+
   // Handle messages from background script
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === 'updateDuplicateTabs') {
       updatePopupContent(message.duplicates);
+    } else if (message.action === 'summary') {
+        showSummary(message.summaryText);
     }
   });
 });
