@@ -87,6 +87,9 @@ To install the extension, follow these steps:
 
 ## Coming Soon
 
+- Streaming output from LLM
+- Chat about content of tab/s
+- Group by semantic content of the tabs
 
 ## Customization
 
