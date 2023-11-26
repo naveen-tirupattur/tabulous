@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+
   //  TODO - Enable this functionality in the future
   // const groupAllButton = document.getElementById('groupAll');
   //
@@ -83,12 +84,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to show loading message
     function showLoadingMessage() {
-      loadingMessage.style.display = 'block';
+      const summaryText = document.getElementById('summaryText');
+      summaryText.innerHTML = '';
+      const textAreaElement = document.createElement('div');
+      textAreaElement.textContent = "Generating...";
+      textAreaElement.style.display = "block";
+      summaryText.appendChild(textAreaElement)
     }
 
     // Function to hide loading message
     function hideLoadingMessage() {
-      loadingMessage.style.display = 'none';
+      const loadingMessage = document.getElementById('loadingMessage');
+      loadingMessage.style.display = "none";
     }
   });
 
@@ -103,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
       duplicateTabsList.innerHTML = ''; // Clear existing content
       duplicateTabs.forEach((group) => {
         const listItem = document.createElement('li');
+        listItem.title = group[0].url; // Display the URL as tooltip
         listItem.textContent = group[0].title; // Display the title of the first tab in the group
         listItem.classList.add('duplicate-tab-group'); // Add the CSS class to the list item
         duplicateTabsList.appendChild(listItem);
@@ -110,14 +118,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function clearDuplicates(){
+    const duplicateTabsList = document.getElementById('duplicateTabsList');
+    duplicateTabsList.innerHTML = '';
+  }
+
   // Function to update the popup with summary
   function showSummary(summary) {
     const summaryText = document.getElementById('summaryText');
-
+    summaryText.innerHTML = '';
     if (summary.length === 0) {
       summaryText.textContent = 'Could not summarize the document';
     } else {
-      summaryText.textContent = summary;
+      summaryText.innerHTML = '';
+      const textAreaElement = document.createElement('div');
+      textAreaElement.textContent = summary;
+      summaryText.appendChild(textAreaElement)
     }
   }
 
@@ -126,7 +142,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (message.action === 'updateDuplicateTabs') {
       updatePopupContent(message.duplicates);
     } else if (message.action === 'summary') {
-        showSummary(message.summaryText);
+      showSummary(message.summaryText);
+    } else if (message.action == 'clearDuplicates') {
+      clearDuplicates();
     }
   });
 });

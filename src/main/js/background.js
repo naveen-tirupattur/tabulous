@@ -141,6 +141,8 @@ function duplicateTabsHandler(selectedAction) {
     });
     groupAllDuplicateTabs();
     tabUrls.clear();
+  } else{
+    chrome.runtime.sendMessage({ action: 'clearDuplicates'});
   }
 }
 
@@ -162,12 +164,9 @@ function groupAllDuplicateTabs() {
     }
   });
   duplicateTabs.clear();
-  sendGroupedTabsToPopup(groupedTabs);
-}
-
-function sendGroupedTabsToPopup(groupedTabs) {
   chrome.runtime.sendMessage({ action: 'updateDuplicateTabs', duplicates: groupedTabs });
 }
+
 
 // Listen for messages from the popup window
 chrome.runtime.onMessage.addListener((request, sender,  sendResponse) => {
