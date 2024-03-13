@@ -1,2 +1,4 @@
 /.idea
-/src/main/python/.env
+/src/main/python/.pytest_cache
+.pyc
+
