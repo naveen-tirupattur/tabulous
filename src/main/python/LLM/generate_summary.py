@@ -1,42 +1,25 @@
 import asyncio
-import types
-from typing import AsyncIterable, Awaitable, Any, AsyncGenerator
+
+from typing import AsyncGenerator
 import logging
 
-from langchain.llms import LlamaCpp
-from langchain.callbacks import StdOutCallbackHandler
 from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
+from langchain.llms import Ollama
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("GenerateSummary")
 
 class GenerateSummary:
     """Perform all LLM operations"""
-    def __init__(self, model_path:str):
-        n_gpu_layers = 10  # Change this value based on your model and your GPU VRAM pool.
-        n_batch = 1024  # Should be between 1 and n_ctx, consider the amount of VRAM in your GPU.
-        # self.callback = AsyncIteratorCallbackHandler() # Callbacks support token-wise streaming
-
-        # Loading model,
-        self.llm = LlamaCpp(
-            model_path=model_path,
-            max_tokens=1024,
-            n_gpu_layers=n_gpu_layers,
-            n_batch=n_batch,
-            callbacks=[StdOutCallbackHandler()],
-            verbose=True,
-            streaming=True,
-            f16_kv=True,
-            n_ctx=4096, # Context window
-        )
+    def __init__(self, model_name:str):
+        self.llm = Ollama(model=model_name)
     async def summarize(self, content: str)-> AsyncGenerator[str, None]:
         """
         Generate a detailed summary
         """
-        docs = [Document(page_content=content, metadata={"source": "jquery"})]
+        docs = [Document(page_content=content, metadata={"source": "chrome"})]
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size = 5000,
             chunk_overlap  = 100,
@@ -44,6 +27,7 @@ class GenerateSummary:
             is_separator_regex = False,
         )
         split_docs = text_splitter.split_documents(docs)
+        print(split_docs)
         logger.info("Generating")
         chain = load_summarize_chain(self.llm, chain_type="map_reduce", verbose=True)
 
@@ -69,5 +53,13 @@ class GenerateSummary:
         split_docs = text_splitter.split_documents(docs)
         logger.info("Generating Summary")
         chain = load_summarize_chain(self.llm, chain_type="map_reduce", verbose=True)
+        # chain.llm_chain.prompt.template = \
+        #     """Write a two-paragraph summary the following and highlight key themes:
+        #
+        #
+        #     "{text}"
+        #
+        #
+        #     2 PARAGRAPH SUMMARY:"""
         result = chain({"input_documents": split_docs}, return_only_outputs=True)
         return result["output_text"]

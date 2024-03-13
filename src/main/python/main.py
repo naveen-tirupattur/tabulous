@@ -22,10 +22,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Main")
 
 load_dotenv(find_dotenv())
-MODEL_PATH = os.environ.get("MODEL_PATH")
+MODEL_NAME = os.environ.get("MODEL_NAME")
 PORT = os.environ.get("PORT")
 
-get_summary = GenerateSummary(model_path=MODEL_PATH)
+get_summary = GenerateSummary(model_name=MODEL_NAME)
 @app.on_event("startup")
 async def startup_event():
     logger.info("starting the server on port 9000")
@@ -67,5 +67,4 @@ async def get(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=PORT)

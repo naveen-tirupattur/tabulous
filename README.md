@@ -26,26 +26,26 @@ To install the extension, follow these steps:
 
     ```
     # Using venv (Python 3.x)
-    python3 -m venv venv
+    python3 -m venv tabuluous-venv
 
     # Activate the virtual environment (Linux or macOS)
-    source venv/bin/activate
+    source tabulous-venv/bin/activate
 
     # Activate the virtual environment (Windows)
-    venv\Scripts\activate
+    tabulous-venv\Scripts\activate
     ```
 
-3. **Install dependencies:**
+3. **Install dependencies and Ollama:**
 
     ```
     pip install -r requirements.txt
     ```
+   Install Ollama from [here](https://github.com/ollama/ollama)
 
 4. **Configuration:**
 
-   - Download the appropriate llama2 cpp model from HuggingFace (courtesy of TheBloke) 
-     - https://huggingface.co/TheBloke
-   - Update .env file with the location of model on your local machine
+   - Pull the model from ollama - ```ollama pull llama2```
+   - Update .env file under src/main/python with the name of model
 
 5. **Run the application:**
 
