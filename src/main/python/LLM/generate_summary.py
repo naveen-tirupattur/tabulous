@@ -21,8 +21,8 @@ class GenerateSummary:
         """
         docs = [Document(page_content=content, metadata={"source": "chrome"})]
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 5000,
-            chunk_overlap  = 100,
+            chunk_size = 2000,
+            chunk_overlap  = 250,
             length_function = len,
             is_separator_regex = False,
         )
@@ -53,13 +53,12 @@ class GenerateSummary:
         split_docs = text_splitter.split_documents(docs)
         logger.info("Generating Summary")
         chain = load_summarize_chain(self.llm, chain_type="map_reduce", verbose=True)
-        # chain.llm_chain.prompt.template = \
-        #     """Write a two-paragraph summary the following and highlight key themes:
-        #
-        #
-        #     "{text}"
-        #
-        #
-        #     2 PARAGRAPH SUMMARY:"""
+
+        # Prompt to identify key themes and summary for each chunk
+        chain.llm_chain.prompt.template = """Identify key themes present in the text and summarize it in 20-30 words from sentences taken from the text, removing irrelevant information.
+        Finish your answer with the summary. No yapping.
+        {text}
+        KEY THEMES:"""
+
         result = chain({"input_documents": split_docs}, return_only_outputs=True)
         return result["output_text"]
