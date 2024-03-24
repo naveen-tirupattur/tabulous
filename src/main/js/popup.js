@@ -1,22 +1,136 @@
 // popup.js
+// Function to group tabs by URL
+function groupTabsByDomain(tabs) {
+  var tabsByDomain = new Map();
+  tabs.forEach((tab) => {
+    var url = new URL(tab.url);
+    var domain = url.hostname;
+    if (tabsByDomain.has(domain)) {
+      var tabsArray = tabsByDomain.get(domain);
+      tabsArray.push(tab.id);
+    } else {
+      tabsByDomain.set(domain, [tab.id]);
+    }
+  });
+  return tabsByDomain;
+}
 
-// Function to send a message to background.js
-function sendMessageToBackground(handler, selectedElement, selectedAction) {
-  chrome.runtime.sendMessage({ handler, selectedElement, selectedAction });
+// Function to group tabs
+async function groupTabsToWindow(tabIds, windowId, domain) {
+  const group = await chrome.tabs.group({tabIds});
+  await chrome.tabGroups.update(group, { title: domain });
+  // await chrome.tabs.move(tabIds, { windowId, index: -1 });
+}
+
+function groupTabs(tabGroupingOption) {
+  const windowId = tabGroupingOption === 'groupActive' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
+  chrome.tabs.query({windowId: windowId}, (tabs) => {
+    const tabGroups = groupTabsByDomain(tabs);
+    tabGroups.forEach(function (tabIds, domain) {
+      if (tabIds.length > 1) {
+        groupTabsToWindow(tabIds, windowId, domain);
+      }
+    });
+  });
+}
+
+// Function to handle ungrouping of tabs in active window
+function ungroupTabs(tabGroupingOption) {
+  const windowId = tabGroupingOption === 'groupActive' ? chrome.windows.WINDOW_ID_CURRENT : chrome.windows.WINDOW_ID_NONE;
+  console.log('Ungrouping Tabs', windowId);
+  chrome.tabs.query({windowId:windowId}, (tabs) => {
+    tabs.forEach((tab) => {
+      chrome.tabs.ungroup(tab.id);
+    });
+  });
+}
+
+function groupTabsHandler(selectedElement, selectedAction) {
+  if(selectedAction)
+    groupTabs(selectedElement);
+  else
+    ungroupTabs(selectedElement);
 }
 
 // Function to handle changes in the toggle switches
 function handleEvent(selectedElement, selectedAction) {
-  // const selectedAction = document.querySelector('input[name="tabAction"]:checked').value;
   if (selectedElement === 'groupActive' || selectedElement === 'groupAll') {
-    sendMessageToBackground('groupTabs', selectedElement, selectedAction);
-  } else
-    sendMessageToBackground(selectedElement, selectedElement, selectedAction);
-
+    groupTabsHandler(selectedElement, selectedAction);
+  } else if (selectedElement === 'detectDuplicates') {
+    duplicateTabsHandler(selectedAction);
+  }
   // Save the value to sync storage
   chrome.storage.sync.set({[selectedElement]: selectedAction}, function() {
     console.log('Saved', selectedElement, selectedAction);
   });
+}
+
+function clearDuplicates(){
+  const duplicateTabsList = document.getElementById('duplicateTabsList');
+  duplicateTabsList.innerHTML = '';
+}
+
+// Function to detect duplicate tabs in either active window or all windows
+const tabUrls = new Set();
+const duplicateTabs = new Set();
+function duplicateTabsHandler(selectedAction) {
+  if (selectedAction) {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach((tab) => {
+        if (tabUrls.has(tab.url)) {
+          // Handle duplicate tab here, for example, group them or provide visual feedback
+          // For simplicity, we'll just display an alert message
+          // console.log('Found duplicate tab', tab.url)
+          duplicateTabs.add(tab);
+        } else {
+          tabUrls.add(tab.url);
+        }
+      });
+    });
+    groupAllDuplicateTabs();
+    tabUrls.clear();
+  } else{
+    clearDuplicates()
+  }
+}
+
+// Function to update the popup content with the list of duplicate tabs
+function updatePopupContent(duplicateTabs) {
+  const duplicateTabsList = document.getElementById('duplicateTabsList');
+  duplicateTabsList.innerHTML = '';
+
+  if (duplicateTabs.length === 0) {
+    duplicateTabsList.textContent = 'No duplicate tabs found.';
+  } else {
+    duplicateTabsList.innerHTML = ''; // Clear existing content
+    duplicateTabs.forEach((group) => {
+      const listItem = document.createElement('li');
+      listItem.title = group[0].url; // Display the URL as tooltip
+      listItem.textContent = group[0].title; // Display the title of the first tab in the group
+      listItem.classList.add('duplicate-tab-group'); // Add the CSS class to the list item
+      duplicateTabsList.appendChild(listItem);
+    });
+  }
+}
+function groupAllDuplicateTabs() {
+  const groups = new Map();
+  duplicateTabs.forEach((tab) => {
+    const key = tab.url;
+    if (!groups.has(key)) {
+      groups.set(key, [tab]);
+    } else {
+      groups.get(key).push(tab);
+    }
+  });
+
+  const groupedTabs = [];
+  groups.forEach((group) => {
+    if (group.length >= 1) {
+      groupedTabs.push(group);
+    }
+  });
+  duplicateTabs.clear();
+  updatePopupContent(groupedTabs);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -41,110 +155,71 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 
-  //  TODO - Enable this functionality in the future
-  // const groupAllButton = document.getElementById('groupAll');
-  //
-  // groupAllButton.addEventListener('click', function () {
-  //   handleEvent('groupAll', true);
-  // });
-  //
-
-  // TODO - Add functionality to save API keys
-  // // Saves the API key to chrome.storage
-  // const saveButton = document.getElementById('saveButton');
-  //
-  // saveButton.addEventListener('click', function () {
-  //   const apiKey = document.querySelector('#apiKey').value;
-  //   chrome.storage.sync.set({
-  //     "apiKey": apiKey
-  //   }, () => {
-  //     // Update status to let user know options were saved.
-  //     const status = document.getElementById('status');
-  //     status.textContent = 'API Key Saved.';
-  //     setTimeout(() => {
-  //       status.textContent = '';
-  //     }, 750);
-  //   });
-  // });
-
-  // const apiKeyText = document.getElementById('apiKey');
-  // chrome.storage.sync.get('apiKey', key => {
-  //   if(key.apiKey != undefined)
-  //   apiKeyText.placeholder = key.apiKey;
-  // });
-
   const summarizeButton = document.getElementById('summarizeBtn');
+  const statusDiv = document.getElementById("status");
+  const summaryDiv = document.getElementById("summaryText");
 
+  // Listen for the summarize button click event
   summarizeButton.addEventListener('click', function () {
-    // Show loading message while waiting for API response
-    showLoadingMessage();
-    handleEvent('summarize', true);
-    // Hide loading message once text is generated and displayed
-    hideLoadingMessage();
-
-    // Function to show loading message
-    function showLoadingMessage() {
-      const summaryText = document.getElementById('summaryText');
-      summaryText.innerHTML = '';
-      const textAreaElement = document.createElement('div');
-      textAreaElement.textContent = "Generating...";
-      textAreaElement.style.display = "block";
-      summaryText.appendChild(textAreaElement)
-    }
-
-    // Function to hide loading message
-    function hideLoadingMessage() {
-      const loadingMessage = document.getElementById('loadingMessage');
-      loadingMessage.style.display = "none";
-    }
-  });
-
-  // Function to update the popup content with the list of duplicate tabs
-  function updatePopupContent(duplicateTabs) {
-    const duplicateTabsList = document.getElementById('duplicateTabsList');
-    duplicateTabsList.innerHTML = '';
-
-    if (duplicateTabs.length === 0) {
-      duplicateTabsList.textContent = 'No duplicate tabs found.';
-    } else {
-      duplicateTabsList.innerHTML = ''; // Clear existing content
-      duplicateTabs.forEach((group) => {
-        const listItem = document.createElement('li');
-        listItem.title = group[0].url; // Display the URL as tooltip
-        listItem.textContent = group[0].title; // Display the title of the first tab in the group
-        listItem.classList.add('duplicate-tab-group'); // Add the CSS class to the list item
-        duplicateTabsList.appendChild(listItem);
-      });
-    }
-  }
-
-  function clearDuplicates(){
-    const duplicateTabsList = document.getElementById('duplicateTabsList');
-    duplicateTabsList.innerHTML = '';
-  }
+    summaryDiv.textContent = "";
+    statusDiv.textContent = "Summarizing...";
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      const activeTab = tabs[0];
+      chrome.runtime.sendMessage({ handler: 'summarize' });
+    });
+   });
 
   // Function to update the popup with summary
-  function showSummary(summary) {
-    const summaryText = document.getElementById('summaryText');
-    summaryText.innerHTML = '';
-    if (summary.length === 0) {
-      summaryText.textContent = 'Could not summarize the document';
+  function showSummary(responseText, activeTabId) {
+    console.log(responseText);
+    if(responseText !== undefined && responseText.length !== 0){
+      // Display the output
+      statusDiv.textContent = "";
+      // Save the llm output data to Chrome storage
+      chrome.storage.local.set({ [activeTabId]: responseText }, function () {
+        // Display the themes and summary
+        displaySummary(responseText);
+      });
     } else {
-      summaryText.innerHTML = '';
-      const textAreaElement = document.createElement('div');
-      textAreaElement.textContent = summary;
-      summaryText.appendChild(textAreaElement)
+      statusDiv.textContent = "Failed to generate summary.";
+      summaryDiv.textContent = "";
     }
   }
+
+  // Function to display llm output
+  function displaySummary(responseText) {
+    const data = JSON.parse(responseText)
+    // Parse the llm_output field as JSON
+    const llmOutput = JSON.parse(data.llm_output);
+    // Extract themes and summary from parsed JSON
+    const themes = llmOutput.themes;
+    const summary = llmOutput.summary;
+    // Display the themes and summary
+    summaryDiv.innerHTML = `
+      <h2>Themes:</h2>
+      <ul>
+        ${themes.map(theme => `<li>${theme}</li>`).join('')}
+      </ul>
+      <h2>Summary:</h2>
+      <p>${summary}</p>
+      <br>
+      <p><b>Time taken:</b> ${data.time_taken} seconds</p>
+    `;
+  }
+
+  // Load saved summary data when popup is opened
+  // chrome.storage.local.get(activeTabId, function (result) {
+  //   const responseText = result[activeTabId];
+  //   console.log(responseText)
+  //   if (responseText) {
+  //     displaySummary(responseText);
+  //   }
+  // });
 
   // Handle messages from background script
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.action === 'updateDuplicateTabs') {
-      updatePopupContent(message.duplicates);
-    } else if (message.action === 'summary') {
-      showSummary(message.summaryText);
-    } else if (message.action == 'clearDuplicates') {
-      clearDuplicates();
+    if (message.action === 'summary') {
+      showSummary(message.responseText, message.activeTabId);
     }
   });
 });

@@ -14,3 +14,4 @@ tiktoken
 llama-cpp-python
 python-dotenv
 chromadb
+transformers

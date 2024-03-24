@@ -52,8 +52,8 @@ async def summarizeText(request: Request):
         jsonRequest = json.loads(request)
         # Call GenerateSummary and get detailed summary
         result = get_summary.summarize_text(jsonRequest["text"])
-        print(result)
-        return Response(content=result)
+        logger.info(result)
+        return result
     except Exception as e:
         return str(e)
 

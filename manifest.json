@@ -12,7 +12,11 @@
     "default_popup": "src/main/ui/popup.html",
     "default_icon": "images/icon-128.png"
   },
-  "permissions": ["tabs","tabGroups","scripting","activeTab", "storage", "notifications"],
+  "permissions": ["tabs","tabGroups","scripting","activeTab", "storage", "notifications","alarms"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
   "background": {"service_worker": "src/main/js/background.js"},
   "content_scripts": [{
     "js": ["src/main/js/content.js", "src/main/js/readability.js"],

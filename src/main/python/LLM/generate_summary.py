@@ -7,6 +7,7 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.llms import Ollama
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("GenerateSummary")
@@ -43,6 +44,8 @@ class GenerateSummary:
         await task
 
     def summarize_text(self, content: str):
+        startTime = datetime.now()
+        print(f'start time {startTime}')
         docs = [Document(page_content=content, metadata={"source": "jquery"})]
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size = 5000,
@@ -55,10 +58,23 @@ class GenerateSummary:
         chain = load_summarize_chain(self.llm, chain_type="map_reduce", verbose=True)
 
         # Prompt to identify key themes and summary for each chunk
-        chain.llm_chain.prompt.template = """Identify key themes present in the text and summarize it in 20-30 words from sentences taken from the text, removing irrelevant information.
-        Finish your answer with the summary. No yapping.
+        chain.llm_chain.prompt.template = """
+        Identify key themes present in the text and genrate a concise summarized version of the text, 
+        removing irrelevant information. No yapping!
+        
         {text}
-        KEY THEMES:"""
+        
+        Return your answer in the json format:
+        {{
+            "themes": ["Theme 1", "Theme 2", "Theme 3"],
+            "summary": "Summary of the text"
+        }}
+        THEMES AND CONCISE SUMMARY:"""
 
         result = chain({"input_documents": split_docs}, return_only_outputs=True)
-        return result["output_text"]
+        endTime = datetime.now()
+        print(f'time taken {endTime - startTime}')
+        response = {}
+        response["llm_output"] = result["output_text"]
+        response["time_taken"] = endTime - startTime
+        return response
