@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <h2>Summary:</h2>
       <p>${summary}</p>
       <br>
-      <p><b>Time taken:</b> ${data.time_taken} seconds</p>
+      <p><b>Generated in:</b> ${data.time_taken} seconds</p>
     `;
   }
 

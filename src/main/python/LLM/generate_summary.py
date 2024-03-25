@@ -59,7 +59,7 @@ class GenerateSummary:
 
         # Prompt to identify key themes and summary for each chunk
         chain.llm_chain.prompt.template = """
-        Identify key themes present in the text and genrate a concise summarized version of the text, 
+        Identify key themes present in the text and generate a concise summarized version of the text, 
         removing irrelevant information. No yapping!
         
         {text}
@@ -74,7 +74,5 @@ class GenerateSummary:
         result = chain({"input_documents": split_docs}, return_only_outputs=True)
         endTime = datetime.now()
         print(f'time taken {endTime - startTime}')
-        response = {}
-        response["llm_output"] = result["output_text"]
-        response["time_taken"] = endTime - startTime
+        response = {"llm_output": result["output_text"], "time_taken": endTime - startTime}
         return response
