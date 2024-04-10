@@ -6,7 +6,6 @@ import logging
 from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.llms import Ollama
 from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
@@ -14,8 +13,8 @@ logger = logging.getLogger("GenerateSummary")
 
 class GenerateSummary:
     """Perform all LLM operations"""
-    def __init__(self, model_name:str):
-        self.llm = Ollama(model=model_name)
+    def __init__(self, llm):
+        self.llm = llm
     async def summarize(self, content: str)-> AsyncGenerator[str, None]:
         """
         Generate a detailed summary
@@ -28,7 +27,6 @@ class GenerateSummary:
             is_separator_regex = False,
         )
         split_docs = text_splitter.split_documents(docs)
-        print(split_docs)
         logger.info("Generating")
         chain = load_summarize_chain(self.llm, chain_type="map_reduce", verbose=True)
 
@@ -45,7 +43,7 @@ class GenerateSummary:
 
     def summarize_text(self, content: str):
         startTime = datetime.now()
-        print(f'start time {startTime}')
+        logger.info(f'start time {startTime}')
         docs = [Document(page_content=content, metadata={"source": "jquery"})]
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size = 5000,
@@ -59,12 +57,12 @@ class GenerateSummary:
 
         # Prompt to identify key themes and summary for each chunk
         chain.llm_chain.prompt.template = """
-        Identify key themes present in the text and generate a concise summarized version of the text, 
+        Identify the key themes present in the text and generate a concise summarized version of the text, 
         removing irrelevant information. No yapping!
         
         {text}
         
-        Return your answer in the json format:
+        Return your answer in the following format:
         {{
             "themes": ["Theme 1", "Theme 2", "Theme 3"],
             "summary": "Summary of the text"
@@ -73,6 +71,6 @@ class GenerateSummary:
 
         result = chain({"input_documents": split_docs}, return_only_outputs=True)
         endTime = datetime.now()
-        print(f'time taken {endTime - startTime}')
+        logger.info(f'time taken {endTime - startTime}')
         response = {"llm_output": result["output_text"], "time_taken": endTime - startTime}
         return response

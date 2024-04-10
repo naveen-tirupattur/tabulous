@@ -7,7 +7,8 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from src.main.python.LLM.generate_summary import GenerateSummary
-
+from src.main.python.LLM.process_text import ProcessText
+from  langchain_community.llms import Ollama
 
 app = FastAPI()
 app.add_middleware(
@@ -25,7 +26,9 @@ load_dotenv(find_dotenv())
 MODEL_NAME = os.environ.get("MODEL_NAME")
 PORT = os.environ.get("PORT")
 
-get_summary = GenerateSummary(model_name=MODEL_NAME)
+llm = Ollama(model=MODEL_NAME, verbose=True)
+get_summary = GenerateSummary(llm)
+process_text = ProcessText(llm)
 @app.on_event("startup")
 async def startup_event():
     logger.info("starting the server on port 9000")
@@ -52,6 +55,20 @@ async def summarizeText(request: Request):
         jsonRequest = json.loads(request)
         # Call GenerateSummary and get detailed summary
         result = get_summary.summarize_text(jsonRequest["text"])
+        logger.info(result)
+        return result
+    except Exception as e:
+        return str(e)
+
+@app.post("/tokenizeText/")
+async def tokenizeText(request: Request):
+    logger.info("Tokenizing text")
+    try:
+        request = await request.body()
+        logger.info(request)
+        jsonRequest = json.loads(request)
+        # Call GenerateSummary and get detailed summary
+        result = process_text.process(jsonRequest["text"])
         logger.info(result)
         return result
     except Exception as e:

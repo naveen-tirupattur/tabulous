@@ -133,51 +133,38 @@ function groupAllDuplicateTabs() {
   updatePopupContent(groupedTabs);
 }
 
-// Attempt to summarize the page
-async function summarize(url, truncatedVisibleText) {
-  // Define the URL of your FastAPI endpoint
-  const apiUrl = 'http://localhost:9000/summarizeText';
-
-  // Create a JSON object to send as the request body (if needed)
-  const requestBody = {
-    "url": url,
-    "text": truncatedVisibleText,
-  };
-
-  // Define the headers for the request (if needed)
-  const headers = {
-    'Content-Type': 'application/json', // Adjust as needed
-    // Add any other headers you need here
-  };
-
-  // Define the fetch options
-  const fetchOptions = {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(requestBody),
-  };
-
-  console.log(fetchOptions)
-
-  // Use the fetch API to make the POST request
-  const response = await fetch(apiUrl, fetchOptions)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Handle the response data here
-        const jsonResponse = JSON.stringify(data, null, 2);
-        console.log('Response from FastAPI:', jsonResponse);
-        return jsonResponse;
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during the fetch here
-        console.error('Fetch error:', error);
-      });
-  return response;
+async function callAPI(url, text, endpoint = 'processText') {
+    const apiUrl = 'http://localhost:9000/' + endpoint;
+    console.log(apiUrl);
+    const requestBody = {
+        "url": url,
+        "text": text,
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    const fetchOptions = {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(requestBody),
+    };
+    console.log(fetchOptions)
+    const response = await fetch(apiUrl, fetchOptions)
+        .then((response) => {
+            if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            const jsonResponse = JSON.stringify(data, null, 2);
+            console.log('Response from FastAPI:', jsonResponse);
+            return jsonResponse;
+        })
+        .catch((error) => {
+            console.error('Fetch error:', error);
+        });
+    return response;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -201,6 +188,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const activeTab = tabs[0];
+    const visibleText =  chrome.tabs.sendMessage(activeTab.id, {action: "getVisibleText"});
+    visibleText.then((text) => {
+      // Send the text to the FASTAPI server for processing
+      async () => {
+        const response = await processText(activeTab.url, visibleText, 'tokenizeText');
+        console.log(response);
+      }
+    });
+  });
 
   const summarizeButton = document.getElementById('summarizeBtn');
   const statusDiv = document.getElementById("status");
@@ -215,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
       (async () => {
         const visibleText = await chrome.tabs.sendMessage(activeTab.id, {action: "getVisibleText"});
         console.log(visibleText)
-        const response = await summarize(activeTab.url, visibleText)
+        const response = await callAPI(activeTab.url, visibleText, 'summarizeText');
         showSummary(response, activeTab.id);
       })();
     });
