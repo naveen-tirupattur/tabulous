@@ -72,8 +72,8 @@ To install the extension, follow these steps:
         - LLM/generate_summary.py: Uses MapReduce chain from langchain to summarize text
 
     - src/main/js
-        - `background.js`: Brains of the extension, handles various operations
-        - `popup.js`: Provides the JavaScript functionality for the popup window.
+        - `background.js`: Handles clean up of chrome storage
+        - `popup.js`: Provides the core functionality of the plugin
         - `content.js`: Content script that runs in the context of the web page being viewed or accessed.
                         It allows the extension to interact with the DOM (Document Object Model) of the webpage.
         - `readbility.js`: JavaScript library or script designed to extract and parse content from web pages
