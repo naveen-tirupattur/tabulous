@@ -62,7 +62,7 @@ class GenerateSummary:
         
         {text}
         
-        Return your answer in the following format:
+        Return your answer in the following format in json:
         {{
             "themes": ["Theme 1", "Theme 2", "Theme 3"],
             "summary": "Summary of the text"
