@@ -26,7 +26,7 @@ To install the extension, follow these steps:
 
     ```
     # Using venv (Python 3.x)
-    python3 -m venv tabuluous-venv
+    python3 -m venv tabulous-venv
 
     # Activate the virtual environment (Linux or macOS)
     source tabulous-venv/bin/activate
