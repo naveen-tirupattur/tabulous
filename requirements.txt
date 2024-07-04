@@ -14,3 +14,4 @@ tiktoken
 python-dotenv
 chromadb
 transformers
+langchain-community
