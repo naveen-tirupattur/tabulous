@@ -1,12 +1,42 @@
 // (file deleted for new extension setup)
 (function () {
+    // Inject Readability if not present
+    if (typeof window.Readability === 'undefined') {
+        const script = document.createElement('script');
+        script.src = chrome.runtime.getURL('src/main/js/readability.js');
+        script.onload = function() { this.remove(); };
+        (document.head || document.documentElement).appendChild(script);
+    }
     // Create the button
     const button = document.createElement('button');
     button.id = 'tabulous-btn';
     button.innerText = 'Tabulous';
     button.className = 'tabulous-btn';
+    // Overlay creation function
+    function showOverlay(title, content) {
+        if (document.getElementById('tabulous-overlay')) return;
+        const overlay = document.createElement('div');
+        overlay.id = 'tabulous-overlay';
+        overlay.className = 'tabulous-overlay';
+        overlay.innerHTML = `
+            <div class="tabulous-overlay-content">
+                <button class="tabulous-overlay-close">&times;</button>
+                <h2>${title}</h2>
+                <div style="max-height:60vh;overflow:auto;">${content.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        overlay.querySelector('.tabulous-overlay-close').onclick = () => overlay.remove();
+    }
     button.onclick = () => {
-        alert('Tabulous button clicked!');
+        // Use Readability to extract content
+        let article;
+        if (typeof window.Readability !== 'undefined') {
+            article = new window.Readability(document).parse();
+        } else {
+            article = { title: document.title, content: document.body.innerText };
+        }
+        showOverlay(article.title, article.content);
     };
     // Prevent duplicate buttons
     if (!document.getElementById('tabulous-btn')) {
@@ -23,14 +53,14 @@
     }
     // Make the button draggable
     let isDragging = false, offsetX = 0, offsetY = 0;
-    button.addEventListener('mousedown', function (e) {
+    button.addEventListener('mousedown', function(e) {
         isDragging = true;
         offsetX = e.clientX - button.getBoundingClientRect().left;
         offsetY = e.clientY - button.getBoundingClientRect().top;
         button.style.transition = 'none';
         document.body.style.userSelect = 'none';
     });
-    document.addEventListener('mousemove', function (e) {
+    document.addEventListener('mousemove', function(e) {
         if (isDragging) {
             button.style.left = (e.clientX - offsetX) + 'px';
             button.style.top = (e.clientY - offsetY) + 'px';
@@ -38,7 +68,7 @@
             button.style.bottom = 'auto';
         }
     });
-    document.addEventListener('mouseup', function () {
+    document.addEventListener('mouseup', function() {
         if (isDragging) {
             isDragging = false;
             button.style.transition = '';
