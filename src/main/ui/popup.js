@@ -1,5 +1,3 @@
 // popup.js
 
-document.getElementById('myButton').addEventListener('click', function () {
-    alert('Button clicked!');
-});
+// (popup.js is now unused and can be removed)
