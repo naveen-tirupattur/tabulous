@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tabulous",
   "version": "1.0",
-  "description": "A Chrome extension that displays a button in the tab.",
+  "description": "A Chrome extension that displays a stylish button on every tab.",
   "action": {
     "default_popup": "src/main/ui/popup.html",
     "default_icon": {
@@ -15,5 +15,26 @@
     "16": "images/icon-tabulous-50.png",
     "48": "images/icon-tabulous-50.png",
     "128": "images/icon-tabulous-100.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/main/js/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/main/ui/styles.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

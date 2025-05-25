@@ -1,1 +1,23 @@
-/* (file deleted for new extension setup) */
+.tabulous-btn {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 999999;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    left: auto;
+    top: auto;
+}
+
+.tabulous-btn:hover {
+    transform: scale(1.07);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+}
