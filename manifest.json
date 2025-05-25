@@ -21,6 +21,7 @@
         "<all_urls>"
       ],
       "js": [
+        "src/main/js/readability.js",
         "src/main/js/content.js"
       ],
       "run_at": "document_idle"
@@ -38,5 +39,8 @@
   ],
   "side_panel": {
     "default_path": "src/main/ui/sidepanel.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
   }
 }
