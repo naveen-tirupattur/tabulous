@@ -1,4 +1,5 @@
 /.idea
 /src/main/python/.pytest_cache
-.pyc
-
+*.pyc
+*.iml
+.vscode/

@@ -4,15 +4,12 @@ Tired of too many tabs? Try this tabulous Chrome extension! Fully open source an
 
 ## Features
 
-- Summarize the content of a tab
 - Group tabs by domain name
 - Show duplicate tabs
 
 ## Installation
 
 ### Prerequisites
-
-- Python (version 3.11.6)
 
 To install the extension, follow these steps:
 
@@ -22,40 +19,15 @@ To install the extension, follow these steps:
    cd tabulous
    ```
 
-2. **Create a virtual environment:**
-
-    ```
-    # Using venv (Python 3.x)
-    python3 -m venv tabulous-venv
-
-    # Activate the virtual environment (Linux or macOS)
-    source tabulous-venv/bin/activate
-
-    # Activate the virtual environment (Windows)
-    tabulous-venv\Scripts\activate
-    ```
-
-3. **Install dependencies and Ollama:**
-
-    ```
-    pip install -r requirements.txt
-    ```
-   Install Ollama from [here](https://github.com/ollama/ollama)
-
-4. **Configuration:**
-
-   - Pull the model from ollama - ```ollama pull llama2```
-   - Update .env file under src/main/python with the name of model
-
-5. **Run the application:**
+2. **Run the application:**
 
     ```
     make start
     ```
    
-6. **Open Google Chrome and go to `chrome://extensions`**
-7. **Enable Developer mode by toggling the switch in the top right corner.**
-8. **Click on "Load unpacked" and select the directory where you saved the source code.**
+3. **Open Google Chrome and go to `chrome://extensions`**
+4. **Enable Developer mode by toggling the switch in the top right corner.**
+5. **Click on "Load unpacked" and select the directory where you saved the source code.**
 
 ## Usage
 
@@ -64,13 +36,8 @@ To install the extension, follow these steps:
 3. Select the desired action:
    - **Group/Ungroup Tabs (Active Window):** Group tabs within the active window by domain name.
    - **Show Duplicates:** Show duplicate tabs across all windows.
-   - **Summarize:** Summarize the content of this tab.
 
 ## Code Structure
-    - src/main/python
-        - main.py: Defines FASTAPI endpoints
-        - LLM/generate_summary.py: Uses MapReduce chain from langchain to summarize text
-
     - src/main/js
         - `background.js`: Handles clean up of chrome storage
         - `popup.js`: Provides the core functionality of the plugin
@@ -83,7 +50,6 @@ To install the extension, follow these steps:
 
     - `manifest.json`: Defines the metadata and configuration for the Chrome extension.
     - `LICENSE`: The license file specifying the GNU General Public License (GPL) terms.
-
 
 ## Coming Soon
 
