@@ -1,11 +1,10 @@
 # Tabulous!
 
-Tired of too many tabs? Try this tabulous Chrome extension! Fully open source and fully local. 
+Try this tabulous Chrome extension! Fully open source and fully local. 
 
 ## Features
 
-- Group tabs by domain name
-- Show duplicate tabs
+- Summarize content in tabs
 
 ## Installation
 
@@ -32,38 +31,11 @@ To install the extension, follow these steps:
 ## Usage
 
 1. Click on the extension button in the Chrome toolbar.
-2. A popup window will appear with options
-3. Select the desired action:
-   - **Group/Ungroup Tabs (Active Window):** Group tabs within the active window by domain name.
-   - **Show Duplicates:** Show duplicate tabs across all windows.
-
-## Code Structure
-    - src/main/js
-        - `background.js`: Handles clean up of chrome storage
-        - `popup.js`: Provides the core functionality of the plugin
-        - `content.js`: Content script that runs in the context of the web page being viewed or accessed.
-                        It allows the extension to interact with the DOM (Document Object Model) of the webpage.
-        - `readbility.js`: JavaScript library or script designed to extract and parse content from web pages
-
-    - src/main/ui
-        - `popup.html`: Represents the HTML content for the popup window that appears when the extension button is clicked.
-
-    - `manifest.json`: Defines the metadata and configuration for the Chrome extension.
-    - `LICENSE`: The license file specifying the GNU General Public License (GPL) terms.
+2. A side panel will open with summary of the content in the current tab
 
 ## Coming Soon
-
-- Streaming output from LLM
 - Chat about content of tab/s
-- Group by semantic content of the tabs
-
-## Customization
-
-You can customize and enhance this code to suit your specific needs. Some possible enhancements include:
-
-- Adding additional grouping options.
-- Implementing advanced tab management features.
-- Customizing the extension's appearance and behavior.
+- Agents?
 
 Feel free to explore the code and make modifications according to your requirements.
 
