@@ -1,47 +1,137 @@
-// background.js
-// Set up an alarm to trigger the cleanup process every 24 hours (adjust as needed)
-chrome.alarms.create('cleanupAlarm', {
-  periodInMinutes: 24 * 60 // 24 hours
-});
+// Store for article content
+const articleStore = new Map();
 
-// Add listener for the alarm
-chrome.alarms.onAlarm.addListener(alarm => {
-  if (alarm.name === 'cleanupAlarm') {
-    // Call a function to perform the cleanup
-    cleanupLocalStorage();
+async function generateSummary(text, sender) {
+  const apiUrl = 'http://0.0.0.0:11434/api/generate';
+  const requestBody = {
+    "model": "llama3.2",
+    "system": "You are a smart assistant who was designed to summarize articles and web pages. \
+              Your task is to understand the text provided, analyze it and generate a short summary that highlights key information\
+              and insights. The summary should be concise, informative, and easy to understand. ",
+
+    "prompt": text,
+    "stream": true
+  };
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullSummary = '';
+
+    // Send initial summary container message
+    chrome.runtime.sendMessage({
+      action: 'show_summary_container',
+      tabId: sender.tab.id
+    });
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        if (buffer) {
+          try {
+            const json = JSON.parse(buffer);
+            if (json.response) {
+              const chunk = json.response;
+              fullSummary += chunk;
+              // Send the final chunk
+              chrome.runtime.sendMessage({
+                action: 'streamUpdate',
+                chunk: chunk,
+                tabId: sender.tab.id
+              });
+            }
+          } catch (e) {
+            console.error('Error parsing final JSON:', e);
+          }
+        }
+        // Send stream complete message
+        chrome.runtime.sendMessage({
+          action: 'streamComplete',
+          tabId: sender.tab.id
+        });
+        break;
+      }
+
+      buffer += decoder.decode(value, { stream: true });
+
+      while (buffer.includes('\n')) {
+        const lineEnd = buffer.indexOf('\n');
+        const line = buffer.slice(0, lineEnd);
+        buffer = buffer.slice(lineEnd + 1);
+
+        if (line.trim()) {
+          try {
+            const json = JSON.parse(line);
+            if (json.response) {
+              const chunk = json.response;
+              fullSummary += chunk;
+              // Stream each chunk to the side panel
+              chrome.runtime.sendMessage({
+                action: 'streamUpdate',
+                chunk: chunk,
+                tabId: sender.tab.id
+              });
+            }
+          } catch (e) {
+            console.error('Error parsing JSON:', e);
+          }
+        }
+      }
+    }
+
+    return fullSummary || 'No summary generated';
+
+  } catch (error) {
+    console.error('Error calling Ollama:', error);
+    chrome.runtime.sendMessage({
+      action: 'streamError',
+      error: 'Failed to generate summary',
+      tabId: sender.tab.id
+    });
+    return 'Failed to generate summary';
+  }
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'summarize_content') {
+    generateSummary(message.content, sender).then(summary => {
+      const articleData = {
+        title: message.title,
+        content: message.content,
+        summary: summary,
+        url: message.url
+      };
+      articleStore.set(sender.tab.id, articleData);
+    });
+    return false; // No need to wait for response
+  } else if (message.action === 'open_side_panel') {
+    openSidePanel(sender);
+    return false; // No need to wait for response
   }
 });
 
-// Function to perform cleanup of local storage
-function cleanupLocalStorage() {
-  // Perform the cleanup process here
-  // For example, remove outdated or unnecessary data
-  // You can use chrome.storage.local.remove to remove specific keys or data
-  // Sample code to remove all data from local storage
-  chrome.storage.local.clear();
+// Function to open the side panel
+async function openSidePanel(sender) {
+  try {
+    chrome.sidePanel.setOptions({
+      tabId: sender.tab.id,
+      path: "src/main/ui/sidepanel.html",
+      enabled: true
+    });
+    await chrome.sidePanel.open({ tabId: sender.tab.id });
+  } catch (error) {
+    console.error('Error opening side panel:', error);
+  }
 }
-
-// // background.js
-//
-// // Function to inject content script into all tabs
-// function injectContentScript(tabId) {
-//   chrome.scripting.executeScript({ target: {tabId: tabId}, files: ['src/main/js/content.js'] });
-// }
-//
-// // Listen for tab updates
-// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-//   // Check if the tab has completed loading
-//   if (changeInfo.status === 'complete') {
-//     // Inject content script into the updated tab
-//     injectContentScript(tabId);
-//   }
-// });
-
-// Inject content script into all existing tabs when extension is installed or updated
-// chrome.runtime.onInstalled.addListener(function () {
-//   chrome.tabs.query({}, function (tabs) {
-//     tabs.forEach(function (tab) {
-//       injectContentScript(tab.id);
-//     });
-//   });
-// });

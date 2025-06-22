@@ -1,29 +1,56 @@
 {
   "manifest_version": 3,
-  "name": "Tabuluous!",
+  "name": "Tabulous!",
   "version": "1.0",
-  "icons": {
-    "50": "images/icon-tabulous-50.png",
-    "100": "images/icon-tabulous-100.png"
-  },
+  "description": "A Chrome extension that enhances your tab experience.",
   "action": {
-    "default_popup": "src/main/ui/popup.html",
-    "default_icon": "images/icon-tabulous-100.png"
+    "default_icon": {
+      "16": "images/icon-tabulous-50.png",
+      "48": "images/icon-tabulous-50.png",
+      "128": "images/icon-tabulous-100.png"
+    }
   },
-  "permissions": ["tabs","tabGroups","scripting","activeTab","storage","notifications","alarms"],
+  "icons": {
+    "16": "images/icon-tabulous-50.png",
+    "48": "images/icon-tabulous-50.png",
+    "128": "images/icon-tabulous-100.png"
+  },
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "scripting",
+    "activeTab",
+    "storage",
+    "notifications",
+    "sidePanel",
+    "alarms"
+  ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "src/main/js/background.js"
   },
-  "background": {"service_worker": "src/main/js/background.js"},
-  "content_scripts": [{
-    "js": ["src/main/js/content.js", "src/main/js/readability.js"],
-    "matches": [
-      "<all_urls>"
-    ],
-    "exclude_globs": [
-      "*://docs.google.com/*"
-    ]
-  }],
-  "host_permissions": ["<all_urls>"]
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/main/js/readability.js",
+        "src/main/js/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/main/css/tabulous.css"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
 }
