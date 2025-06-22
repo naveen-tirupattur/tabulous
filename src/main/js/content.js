@@ -1,41 +1,29 @@
-// (file deleted for new extension setup)
 (function () {
     // Create the button
     const button = document.createElement('button');
     button.id = 'tabulous-btn';
     button.innerText = 'Tabulous';
     button.className = 'tabulous-btn';
-    // Overlay creation function
-    function showOverlay(title, content) {
-        if (document.getElementById('tabulous-overlay')) return;
-        const overlay = document.createElement('div');
-        overlay.id = 'tabulous-overlay';
-        overlay.className = 'tabulous-overlay';
-        overlay.innerHTML = `
-            <div class="tabulous-overlay-content">
-                <button class="tabulous-overlay-close">&times;</button>
-                <h2>${title}</h2>
-                <div style="max-height:60vh;overflow:auto;">${content}</div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-        overlay.querySelector('.tabulous-overlay-close').onclick = () => overlay.remove();
-    }
-    button.onclick = () => {
-        // Open the side panel (Chrome 114+)
-        if (chrome.sidePanel && chrome.sidePanel.open) {
-            chrome.sidePanel.open();
-        }
-        // Show the Readability popup overlay as before
+
+    button.onclick = async () => {
+        // Parse the article content using Readability
         let article;
-        if (typeof window.Readability !== 'undefined') {
-            const docClone = document.cloneNode(true);
-            article = new window.Readability(docClone).parse();
-        } else {
-            article = { title: document.title, content: document.body.innerText };
-        }
-        showOverlay(article.title, article.content);
+        const documentClone = document.cloneNode(true);
+        article = new Readability(documentClone).parse();
+
+        // Send content to background script for summarization
+        chrome.runtime.sendMessage({
+            action: 'summarize_content',
+            title: article.title,
+            content: article.content
+        });
+
+        // Open the side panel immediately
+        chrome.runtime.sendMessage({
+            action: 'open_side_panel'
+        });
     };
+
     // Prevent duplicate buttons
     if (!document.getElementById('tabulous-btn')) {
         document.body.appendChild(button);
@@ -45,7 +33,7 @@
         const style = document.createElement('link');
         style.rel = 'stylesheet';
         style.type = 'text/css';
-        style.href = chrome.runtime.getURL('src/main/ui/styles.css');
+        style.href = chrome.runtime.getURL('src/main/css/tabulous.css');
         style.id = 'tabulous-btn-style';
         document.head.appendChild(style);
     }

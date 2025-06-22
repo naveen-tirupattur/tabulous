@@ -15,6 +15,19 @@
     "48": "images/icon-tabulous-50.png",
     "128": "images/icon-tabulous-100.png"
   },
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "scripting",
+    "activeTab",
+    "storage",
+    "notifications",
+    "sidePanel",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "src/main/js/background.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -30,16 +43,13 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "src/main/ui/styles.css"
+        "src/main/css/tabulous.css"
       ],
       "matches": [
         "<all_urls>"
       ]
     }
   ],
-  "side_panel": {
-    "default_path": "src/main/ui/sidepanel.html"
-  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
   }
