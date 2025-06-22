@@ -33,13 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const summaryText = summaryContainer.querySelector('.summary-text');
             if (summaryText) {
-                summaryText.innerHTML += message.chunk;
+                // Use a buffer to accumulate the markdown, then render as HTML
+                if (!summaryText._markdownBuffer) summaryText._markdownBuffer = '';
+                summaryText._markdownBuffer += message.chunk;
+                summaryText.innerHTML = marked.parse(summaryText._markdownBuffer);
                 summaryText.scrollTop = summaryText.scrollHeight;
             }
         } else if (message.action === 'streamComplete') {
             const summaryText = summaryContainer.querySelector('.summary-text');
             if (summaryText) {
                 summaryText.innerHTML += '<p class="summary-complete">Summary complete.</p>';
+            }
+            // Optionally, clear the buffer after completion
+            if (summaryText && summaryText._markdownBuffer) {
+                delete summaryText._markdownBuffer;
             }
         } else if (message.action === 'streamError') {
             summaryContainer.innerHTML = `
